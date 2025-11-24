@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ./backend
+      target: development
+    command: npm run start:debug
+    ports:
+      - '3000:3000'
+      - '9229:9229'
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend/src:/usr/src/app/src
+      - ./backend/prisma:/usr/src/app/prisma
+    environment:
+      - DATABASE_URL=${DATABASE_URL_DOCKER}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - JWT_SECRET=${JWT_SECRET}
+      - REFRESH_JWT_SECRET=${REFRESH_JWT_SECRET}
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_SOURCE_NUMBER=${TWILIO_SOURCE_NUMBER}
+    networks:
+      - simple-crm-net
+
+  worker:
+    build:
+      context: ./backend
+      target: development
+    command: npm run start:worker:debug
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend/src:/usr/src/app/src
+      - ./backend/prisma:/usr/src/app/prisma
+    environment:
+      - DATABASE_URL=${DATABASE_URL_DOCKER}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - JWT_SECRET=${JWT_SECRET}
+      - REFRESH_JWT_SECRET=${REFRESH_JWT_SECRET}
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_SOURCE_NUMBER=${TWILIO_SOURCE_NUMBER}
+    networks:
+      - simple-crm-net
+
+  postgres:
+    image: 'postgres:15-alpine'
+    container_name: 'simple-crm-db'
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - simple-crm-net
+
+  redis:
+    image: 'redis:7-alpine'
+    container_name: 'simple-crm-redis'
+    ports:
+      - '6380:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - simple-crm-net
+
+  # <-- Your observability stack remains unchanged -->
+
+volumes:
+  postgres_data:
+  redis_data:
+  grafana_data:
+
+networks:
+  simple-crm-net:

@@ -1,0 +1,18 @@
+{
+    "name": "simple-crm-monorepo",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+      "docker:up": "docker-compose up -d --build",
+      "docker:down": "docker-compose down",
+      "docker:down:hard": "docker-compose down -v",
+      "docker:logs": "docker-compose logs -f app",
+      "docker:db:start": "docker-compose up -d postgres",
+  
+      "db:create": "docker-compose exec postgres psql -U postgres -c \"CREATE DATABASE simplecrm;\"",
+      "db:run:migrations": "cat backend/prisma/migrations/001_initial_schema.sql | docker-compose exec -T postgres psql -U postgres -d simplecrm && cat backend/prisma/migrations/002_update_user_roles.sql | docker-compose exec -T postgres psql -U postgres -d simplecrm",  
+      "db:setup": "npm run docker:db:start && npm run db:create && npm run db:migrate",
+      "db:sync:prisma": "cd backend && npm run prisma:pull && cd ..",
+      "db:setup:hard": "npm run docker:down:hard && npm run docker:db:start && npm run db:create && npm run db:run:migrations"
+    }
+  }
