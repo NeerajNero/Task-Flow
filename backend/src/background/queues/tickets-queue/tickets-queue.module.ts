@@ -10,7 +10,7 @@ import { LoggerModule } from '../../../logger/logger.module';
     BullModule.registerQueue({
       name: 'tickets-events',
     }),
-    LoggerModule, // Import LoggerModule for the processor (DbModule is @Global() so available everywhere)
+    LoggerModule,
   ],
   providers: [
     TicketsQueueService, // The Producer (adds jobs)

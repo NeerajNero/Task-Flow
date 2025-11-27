@@ -25,8 +25,7 @@ export class TicketsService {
       dto.title,
       dto.description,
     );
-    const customerEmail =
-      (ticket as any).Customer?.email || 'unknown@example.com';
+    const customerEmail = (ticket as any).Customer?.email;
 
     await this.ticketsQueueService.addTicketCreatedJob(
       ticket.id,
