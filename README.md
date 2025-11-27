@@ -1,4 +1,4 @@
-# SimpleCRM — Enterprise Multi-Tenant Backend
+# SimpleCRM — Multi-Tenant Backend
 
 A production-ready, event-driven CRM backend built with **NestJS**, **Docker**, and **PostgreSQL**.
 
